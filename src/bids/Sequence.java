@@ -1,4 +1,4 @@
-package models;
+package bids;
 
 import java.util.ArrayList;
 import java.util.Arrays;

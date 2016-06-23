@@ -1,4 +1,4 @@
-package models;
+package bids;
 
 public class Bid {
 	
