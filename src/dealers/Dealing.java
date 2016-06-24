@@ -1,19 +1,47 @@
 package dealers;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
-public class Dealing {
+public class Dealing extends ArrayList<Deal> {
 	
-	public Set<Card> cards;
+	private static final long serialVersionUID = 817816938083279142L;
 	
-	
-	
-	public static void main(String[] a) {
-		SortedSet<Card> s = new TreeSet<Card>(Card.comparator);
-		s.add(new Card(1));
-		s.add(new Card(3));
-		s.add(new Card(2));
+	public Set<Card> all_cards() {
+		HashSet<Card> cards = new HashSet<Card>();
+		for (Deal deal : this) {
+			cards.addAll(deal.cards_);
+		}
+		return cards;
 	}
+	
+	
+	public Dealing() {}
+	public Dealing(Dealing d) { super(d); }
+	
+	public Dealing(int... private_cards) {
+		for (int i = 0; i < private_cards.length; i++) {
+			add(new Deal(i,private_cards[i]));
+		}
+	}
+	
+	public Dealing copy(Deal deal) {
+		Dealing new_dealing = new Dealing(this);
+		new_dealing.add(deal);
+		return new_dealing;
+	}
+	
+	
+	public Dealing restrict_player(int player) {
+		Dealing dealing = new Dealing();
+		for (Deal deal: this) {
+			if (deal.player_ == player || deal.type_ == DealType.PUBLIC 
+					|| deal.type_ == DealType.COMMON)
+				dealing.add(deal);
+		}
+		return dealing;
+	}
+	
+	
 }

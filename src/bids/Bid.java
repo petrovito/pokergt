@@ -2,23 +2,26 @@ package bids;
 
 public class Bid {
 	
-	public Action act;
-	public double amount;
-	public int player;
+	public Action act_;
+	public double amount_;
+	public int player_;
 	
-	public  Bid(Action a, double am, int player) {act=a; amount=am; this.player=player;}
+	public  Bid(Action a, double am, int player_) {act_=a; amount_=am; this.player_=player_;}
 	
-	public boolean isFold() { return act==Action.FOLD; }
-	public boolean isCall() { return act==Action.CALL; }
-	public boolean isCheck() { return act==Action.CHECK; }
+	public boolean is_fold() { return act_==Action.FOLD; }
+	public boolean is_call() { return act_==Action.CALL; }
+	public boolean is_check() { return act_==Action.CHECK; }
 
 	public static Bid FOLD(int num_player) {
 		return new Bid(Action.FOLD, 0, num_player);
+	}	
+	public static Bid RAISE(double amount, int num_player) {
+		return new Bid(Action.RAISE, amount, num_player);
 	}
-	public static Bid[] BLINDS(double... amounts) {
-		Bid[] bids= new Bid[amounts.length];
-		for (int i = 0; i < amounts.length; i++) {
-			bids[i]=new Bid(Action.BLIND,amounts[i],i);
+	public static Bid[] BLINDS(double... amount_s) {
+		Bid[] bids= new Bid[amount_s.length];
+		for (int i = 0; i < amount_s.length; i++) {
+			bids[i]=new Bid(Action.BLIND,amount_s[i],i);
 		}
 		return bids;
 	}
@@ -27,6 +30,16 @@ public class Bid {
 	}
 	public static final Bid CALL(int num_player) {
 		return new Bid(Action.CALL, 0, num_player);
+	}
+	
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Bid) {
+			Bid bid = (Bid) obj;
+			return bid.act_ == act_ && bid.player_ == player_ && bid.amount_ == amount_;
+		}
+		return super.equals(obj);
 	}
 	
 
