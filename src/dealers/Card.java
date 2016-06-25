@@ -1,7 +1,6 @@
 package dealers;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
 
 //import java.util.Comparator;
 
@@ -21,12 +20,18 @@ public class Card {
 		return false;
 	}
 	
-	public static Set<Card> card_set(int... cards) {
-		Set<Card> card_set= new HashSet<Card>();
+	public static ArrayList<Card> card_set(int... cards) {
+		ArrayList<Card> card_set= new ArrayList<Card>();
 		for (int card : cards) {
 			card_set.add(new Card(card));
 		}
 		return card_set;
+	}
+	
+	
+	@Override
+	public String toString() {
+		return ""+num_;
 	}
 	
 	//public static final CardComparator comparator = new CardComparator();

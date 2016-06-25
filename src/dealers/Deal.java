@@ -1,17 +1,16 @@
 package dealers;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 public class Deal {
 	
-	Set<Card> cards_;
-	DealType type_ = DealType.PRIVATE;
-	int player_;
+	public ArrayList<Card> cards_;
+	public DealType type_ = DealType.PRIVATE;
+	public int player_;
 
 	public Deal(int player, Card... cards) { 
-		this.cards_ = new HashSet<Card>(Arrays.asList(cards));
+		this.cards_ = new ArrayList<Card>(Arrays.asList(cards));
 		player_=player;
 	}
 	
@@ -34,6 +33,11 @@ public class Deal {
 					&& deal.cards_.equals(cards_);
 		}
 		return super.equals(obj);
+	}
+	
+	@Override
+	public String toString() {
+		return ""+player_+": "+cards_;
 	}
 
 }

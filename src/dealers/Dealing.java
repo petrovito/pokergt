@@ -1,15 +1,13 @@
 package dealers;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 public class Dealing extends ArrayList<Deal> {
 	
 	private static final long serialVersionUID = 817816938083279142L;
 	
-	public Set<Card> all_cards() {
-		HashSet<Card> cards = new HashSet<Card>();
+	public ArrayList<Card> all_cards() {
+		ArrayList<Card> cards = new ArrayList<Card>();
 		for (Deal deal : this) {
 			cards.addAll(deal.cards_);
 		}
