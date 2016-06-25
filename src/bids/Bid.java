@@ -1,5 +1,6 @@
 package bids;
 
+//TODO Bid<T extends BidSystem>
 public class Bid {
 	
 	public Action act_;

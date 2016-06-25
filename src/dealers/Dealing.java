@@ -6,6 +6,8 @@ public class Dealing extends ArrayList<Deal> {
 	
 	private static final long serialVersionUID = 817816938083279142L;
 	
+	private Dealer dealer_;
+	
 	public ArrayList<Card> all_cards() {
 		ArrayList<Card> cards = new ArrayList<Card>();
 		for (Deal deal : this) {
@@ -15,8 +17,8 @@ public class Dealing extends ArrayList<Deal> {
 	}
 	
 	
-	public Dealing() {}
-	public Dealing(Dealing d) { super(d); }
+	public Dealing(Dealer dealer) { dealer_ = dealer;}
+	public Dealing(Dealing d) { super(d); dealer_ = d.dealer_; }
 	
 	public Dealing(int... private_cards) {
 		for (int i = 0; i < private_cards.length; i++) {
@@ -39,6 +41,10 @@ public class Dealing extends ArrayList<Deal> {
 				dealing.add(deal);
 		}
 		return dealing;
+	}
+	
+	public boolean is_end() {
+		return dealer_.is_end(this);
 	}
 	
 	

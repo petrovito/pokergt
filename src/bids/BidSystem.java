@@ -15,7 +15,7 @@ public abstract class BidSystem {
 	
 	public ArrayList<Sequence> sequence_to_respond(int player) {
 		ArrayList<Sequence> sequences = new ArrayList<Sequence>();
-		recursive_sequences(sequences, new Sequence(num_players(),blinds()),player);
+		recursive_sequences(sequences, new Sequence(this, num_players(),blinds()),player);
 		return sequences;
 	}
 	

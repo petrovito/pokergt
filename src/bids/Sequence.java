@@ -1,17 +1,18 @@
 package bids;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Sequence extends ArrayList<Bid> {
 
 	private static final long serialVersionUID = 8347804022559984012L;
 	
+	private BidSystem bid_system_;
 	public int num_players_;
 	public double[] equities_;
 	private double to_call_;
 	
-	public Sequence(int num_players, Bid... bids) { 
+	public Sequence(BidSystem bid_system, int num_players, Bid... bids) { 
+		bid_system_ = bid_system;
 		num_players_ = num_players;
 		equities_ = new double[num_players];
 		for (Bid bid : bids) {
@@ -20,12 +21,13 @@ public class Sequence extends ArrayList<Bid> {
 		to_call_=bids[bids.length-1].amount_;
 	}
 
-	public Sequence(int num_player, double... blinds) {
-		this(num_player,Bid.BLINDS(blinds));
+	public Sequence(BidSystem bid_system, int num_player, double... blinds) {
+		this(bid_system,num_player,Bid.BLINDS(blinds));
 	}
 
 	public Sequence(Sequence sequence) {
 		super(sequence);
+		bid_system_ = sequence.bid_system_;
 		equities_ = sequence.equities_.clone();
 		num_players_ = sequence.num_players_;
 		to_call_ = sequence.to_call_;
@@ -55,6 +57,14 @@ public class Sequence extends ArrayList<Bid> {
 			break;
 		}
 		return true;
+	}
+	
+	public boolean is_bid_end() {
+		return bid_system_.is_bid_end(this);
+	}
+	
+	public boolean is_game_end() {
+		return bid_system_.is_game_end(this);
 	}
 	
 	/*
