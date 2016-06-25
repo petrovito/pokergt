@@ -7,29 +7,22 @@ public class Sequence extends ArrayList<Bid> {
 	private static final long serialVersionUID = 8347804022559984012L;
 	
 	private BidSystem bid_system_;
-	public int num_players_;
 	public double[] equities_;
 	private double to_call_;
 	
-	public Sequence(BidSystem bid_system, int num_players, Bid... bids) { 
+	public Sequence(BidSystem bid_system) { 
 		bid_system_ = bid_system;
-		num_players_ = num_players;
-		equities_ = new double[num_players];
-		for (Bid bid : bids) {
+		equities_ = new double[bid_system.num_players()];
+		for (Bid bid : bid_system.blinds()) {
 			equities_[bid.player_]+=bid.amount_;
 		}
-		to_call_=bids[bids.length-1].amount_;
-	}
-
-	public Sequence(BidSystem bid_system, int num_player, double... blinds) {
-		this(bid_system,num_player,Bid.BLINDS(blinds));
+		to_call_=bid_system.blinds().get(bid_system.blinds().size()-1).amount_;
 	}
 
 	public Sequence(Sequence sequence) {
 		super(sequence);
 		bid_system_ = sequence.bid_system_;
 		equities_ = sequence.equities_.clone();
-		num_players_ = sequence.num_players_;
 		to_call_ = sequence.to_call_;
 	}
 

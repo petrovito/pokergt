@@ -10,7 +10,7 @@ public class TestBidSystem {
 	
 	public static BidSystem test_bids = new BidSystem() {
 		
-		public Bid[] blinds() {
+		public ArrayList<Bid> blinds() {
 			return Bid.BLINDS(0.5,1);
 		}
 		
@@ -31,12 +31,15 @@ public class TestBidSystem {
 	
 	public static void main(String[] args) {
 		System.out.println("TestBidSystem");
-		ArrayList<Sequence> seq0 = test_bids.sequence_to_respond(0);
+		ArrayList<Sequence> seq0 = test_bids.sequences_to_respond(0);
 		assert seq0.size() == 1;
-		assert seq0.contains(new Sequence(test_bids,2,0.5,1));
-		ArrayList<Sequence> seq1 = test_bids.sequence_to_respond(1);
+		assert seq0.contains(new Sequence(test_bids));
+		ArrayList<Sequence> seq1 = test_bids.sequences_to_respond(1);
 		assert seq1.size() == 1;
-		assert seq1.get(0).equals(new Sequence(test_bids,2,0.5,1).copy(Bid.RAISE(2,0)));
+		assert seq1.get(0).equals(new Sequence(test_bids).copy(Bid.RAISE(2,0)));
+		
+		assert test_bids.first_situations(1).get(0).size()==1;
+		assert test_bids.first_situations(1).get(0).get(0).equals(Bid.RAISE(2, 0));
 		
 		System.out.println("OK");
 	}

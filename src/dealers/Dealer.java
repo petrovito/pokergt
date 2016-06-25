@@ -12,6 +12,17 @@ public abstract class Dealer {
 		poss_cards.removeAll(dealing.all_cards());
 		return poss_cards;
 	}*/
+
+	public ArrayList<Dealing> first_dealings(int player) {
+		return next_dealings(new Dealing(this), player);
+	}
+	public ArrayList<Dealing> next_dealings(Dealing dealing, int player) {
+		ArrayList<Dealing> dealings = new ArrayList<Dealing>();
+		for (Deal deal: possible_deals(dealing, player)) {
+			dealings.add(dealing.copy(deal));
+		}
+		return dealings;
+	}
 	
 	public abstract ArrayList<Dealing> possible_opponent_dealings(Dealing dealing);
 	

@@ -1,5 +1,7 @@
 package bids;
 
+import java.util.ArrayList;
+
 //TODO Bid<T extends BidSystem>
 public class Bid {
 	
@@ -19,10 +21,10 @@ public class Bid {
 	public static Bid RAISE(double amount, int num_player) {
 		return new Bid(Action.RAISE, amount, num_player);
 	}
-	public static Bid[] BLINDS(double... amount_s) {
-		Bid[] bids= new Bid[amount_s.length];
+	public static ArrayList<Bid> BLINDS(double... amount_s) {
+		ArrayList<Bid> bids= new ArrayList<Bid>();
 		for (int i = 0; i < amount_s.length; i++) {
-			bids[i]=new Bid(Action.BLIND,amount_s[i],i);
+			bids.add(new Bid(Action.BLIND,amount_s[i],i));
 		}
 		return bids;
 	}
