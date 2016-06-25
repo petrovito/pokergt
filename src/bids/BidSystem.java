@@ -30,6 +30,10 @@ public abstract class BidSystem {
 		}
 	}
 	
+	public int first_player() {
+		return next_player(new Sequence(this));
+	}
+	
 	public ArrayList<Sequence> first_situations(int player) {
 		return next_situations(new Sequence(this),player);
 	}

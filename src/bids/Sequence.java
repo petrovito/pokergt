@@ -59,6 +59,10 @@ public class Sequence extends ArrayList<Bid> {
 	public boolean is_game_end() {
 		return bid_system_.is_game_end(this);
 	}
+
+	public int next_player() {
+		return bid_system_.next_player(this);
+	}
 	
 	/*
 	@Override

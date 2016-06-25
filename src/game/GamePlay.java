@@ -3,11 +3,12 @@ package game;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import bids.Bid;
+
 public class GamePlay extends ArrayList<DealingPlay> {
 
 	private static final long serialVersionUID = -5216638401515725089L;
 	
-	@SuppressWarnings("unused")
 	private Game game_;
 	
 	public GamePlay(Game game) { game_ = game;}
@@ -15,6 +16,11 @@ public class GamePlay extends ArrayList<DealingPlay> {
 	public GamePlay(Game game, DealingPlay... dealing_plays) {
 		super(Arrays.asList(dealing_plays));
 		game_ = game;
+	}
+	
+	public GamePlay(GamePlay game_play) {
+		super(game_play);
+		game_ = game_play.game_;
 	}
 	
 	
@@ -43,6 +49,23 @@ public class GamePlay extends ArrayList<DealingPlay> {
 	
 	public boolean is_bidding_end() {
 		return last().sequence_.is_bid_end();
+	}
+
+	public int next_player() {
+		if (!is_bidding_end()) return last().sequence_.next_player();
+		return game_.biddings_.get(size()).first_player();
+	}
+
+	public GamePlay copy(DealingPlay dealing_play) {
+		GamePlay game_play = new GamePlay(this);
+		game_play.add(dealing_play);
+		return game_play;
+	}
+
+	public GamePlay copy(Bid bid) {
+		GamePlay game_play = new GamePlay(this);
+		game_play.last().sequence_.add(bid);
+		return game_play;
 	}
 	
 
