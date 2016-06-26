@@ -105,5 +105,11 @@ public class GamePlay extends ArrayList<DealingPlay> {
 		return game_play;
 	}
 	
+	
+	public ArrayList<Bid> next_moves(int player) {
+		//...
+		return null;
+	}
+	
 
 }

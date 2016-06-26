@@ -65,7 +65,7 @@ public class Game {
 	
 
 	public ArrayList<GamePlay> all_situations(int player) {
-		ArrayList<GamePlay> situations = first_situations(player);
+		ArrayList<GamePlay> situations = new ArrayList<GamePlay>();
 		for (GamePlay game_play: first_situations(player)) {
 			situations.addAll(recursive_situations(game_play,player));
 		}
@@ -87,11 +87,6 @@ public class Game {
 	public BidSystem actual_bid_system(GamePlay game_play) {
 		return biddings_.get(game_play.size()-1);
 	}
-	
-	
-	
-	
-	
 	
 
 }
