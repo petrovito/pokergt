@@ -20,7 +20,8 @@ public class Dealing extends ArrayList<Deal> {
 	public Dealing(Dealer dealer) { dealer_ = dealer;}
 	public Dealing(Dealing d) { super(d); dealer_ = d.dealer_; }
 	
-	public Dealing(int... private_cards) {
+	public Dealing(Dealer dealer, int... private_cards) {
+		dealer_ = dealer;
 		for (int i = 0; i < private_cards.length; i++) {
 			add(new Deal(i,private_cards[i]));
 		}
@@ -34,7 +35,7 @@ public class Dealing extends ArrayList<Deal> {
 	
 	
 	public Dealing restrict_player(int player) {
-		Dealing dealing = new Dealing();
+		Dealing dealing = new Dealing(dealer_);
 		for (Deal deal: this) {
 			if (deal.player_ == player || deal.type_ == DealType.PUBLIC 
 					|| deal.type_ == DealType.COMMON)
@@ -42,10 +43,21 @@ public class Dealing extends ArrayList<Deal> {
 		}
 		return dealing;
 	}
+
+	public Dealing restrict_players(ArrayList<Integer> players) {
+		Dealing dealing = new Dealing(dealer_);
+		for (Deal deal: this) {
+			if (players.contains(deal.player_) || deal.type_ == DealType.PUBLIC 
+					|| deal.type_ == DealType.COMMON)
+				dealing.add(deal);
+		}
+		return dealing;		
+	}
+	
 	
 	public boolean is_end() {
 		return dealer_.is_end(this);
 	}
-	
+
 	
 }

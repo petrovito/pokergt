@@ -29,11 +29,11 @@ public abstract class Dealer {
 	public abstract Rational possibility(Dealing dealing); 
 	
 	public abstract boolean is_end(Dealing dealing);
-	public abstract int[] winners(Dealing dealing);
+	public abstract ArrayList<Integer> winners(Dealing dealing);
 	
 	public ArrayList<Dealing> possible_dealings(int player) {
 		ArrayList<Dealing> dealings = new ArrayList<Dealing>();
-		Dealing dealing = new Dealing();
+		Dealing dealing = new Dealing(this);
 		recursive_dealings(dealings, dealing,player);
 		return dealings;
 	}

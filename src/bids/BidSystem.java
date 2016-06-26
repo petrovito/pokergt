@@ -2,14 +2,16 @@ package bids;
 
 import java.util.ArrayList;
 
+import org.jscience.mathematics.number.Rational;
+
 public abstract class BidSystem {
 	
-	public boolean is_bid_end(Sequence s) { return is_game_end(s); }
+	public abstract boolean is_bid_end(Sequence s);
 	public abstract boolean is_game_end(Sequence s);
 	public int next_player(Sequence s) { return s.size()%2; }
-	public abstract Bid[] possible_moves(Sequence s);
+	public abstract ArrayList<Bid> possible_moves(Sequence s);
 	public ArrayList<Bid> blinds() {
-		return Bid.BLINDS(0.5,1);
+		return Bid.BLINDS(Rational.valueOf(1, 2),Rational.ONE);
 	}
 	public int num_players() { return 2; }
 	
@@ -38,6 +40,11 @@ public abstract class BidSystem {
 		return next_situations(new Sequence(this),player);
 	}
 	
+	public ArrayList<Sequence> first_situations(int player, ArrayList<Rational> equities) {
+		return next_situations(new Sequence(this,equities),player);
+	}
+	
+	
 	
 	public ArrayList<Sequence> next_situations(Sequence seq, int player) {
 		ArrayList<Sequence> moves = new ArrayList<Sequence>();
@@ -52,5 +59,4 @@ public abstract class BidSystem {
 		}
 		return moves;
 	}
-	
 }

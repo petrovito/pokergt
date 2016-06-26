@@ -9,12 +9,20 @@ public class DealingPlay {
 	public Sequence sequence_;
 	
 	
-	public DealingPlay(Dealing dealing,Sequence sequence) {
+	public DealingPlay(Dealing dealing, Sequence sequence) {
 		dealing_ = dealing;
 		sequence_ = sequence;
 	}
-	
+
 	public DealingPlay() { }
+	
+	
+	public DealingPlay copy() {
+		DealingPlay dealing_play = new DealingPlay();
+		dealing_play.sequence_ = new Sequence(sequence_);
+		dealing_play.dealing_ = new Dealing(dealing_);
+		return dealing_play;
+	}
 	
 	
 	@Override
@@ -25,6 +33,12 @@ public class DealingPlay {
 					&& dealing_play.sequence_.equals(sequence_);
 		}
 		return super.equals(obj);
+	}
+	
+	
+	@Override
+	public String toString() {
+		return "("+dealing_+"::"+sequence_+")";
 	}
 
 }
