@@ -1,6 +1,9 @@
 package dealers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+
+import org.jscience.mathematics.number.Rational;
 
 public class Dealing extends ArrayList<Deal> {
 	
@@ -17,6 +20,11 @@ public class Dealing extends ArrayList<Deal> {
 	}
 	
 	
+	public Rational possibility() {
+		return dealer_.possibility(this);
+	}
+	
+	
 	public Dealing(Dealer dealer) { dealer_ = dealer;}
 	public Dealing(Dealing d) { super(d); dealer_ = d.dealer_; }
 	
@@ -27,12 +35,20 @@ public class Dealing extends ArrayList<Deal> {
 		}
 	}
 	
+	public Dealing(Dealer dealer, Deal... deals) {
+		super(Arrays.asList(deals));
+		dealer_ = dealer;
+	}
+	
 	public Dealing copy(Deal deal) {
 		Dealing new_dealing = new Dealing(this);
 		new_dealing.add(deal);
 		return new_dealing;
 	}
 	
+	public ArrayList<Dealing> next_dealings(int player) {
+		return dealer_.next_dealings(this, player);
+	}
 	
 	public Dealing restrict_player(int player) {
 		Dealing dealing = new Dealing(dealer_);
@@ -55,8 +71,27 @@ public class Dealing extends ArrayList<Deal> {
 	}
 	
 	
+	public Dealing merge(Dealing other) {
+		Dealing dealing = new Dealing(this);
+		for (Deal deal: other) {
+			if (!dealing.contains(deal)) {
+				dealing.add(deal);
+			}
+		}
+		return dealing;
+	}
+	
 	public boolean is_end() {
 		return dealer_.is_end(this);
+	}
+	
+	public ArrayList<Dealing> possible_opponent_dealings() {
+		return dealer_.possible_opponent_dealings(this);
+	}
+
+
+	public Dealing copy() {
+		return new Dealing(this);
 	}
 
 	

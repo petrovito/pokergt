@@ -24,6 +24,8 @@ public abstract class Dealer {
 		return dealings;
 	}
 	
+
+	
 	public abstract ArrayList<Dealing> possible_opponent_dealings(Dealing dealing);
 	
 	public abstract Rational possibility(Dealing dealing); 

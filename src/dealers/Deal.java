@@ -39,6 +39,15 @@ public class Deal {
 	public String toString() {
 		return ""+player_+": "+cards_;
 	}
+	
+	@Override
+	public int hashCode() {
+		int hash = 1000 * player_;
+		for (Card card: cards_) {
+			hash += card.num_*10+card.color_;
+		}
+		return hash;
+	}
 
 }
 

@@ -11,7 +11,7 @@ public class Strategy extends HashMap<GamePlay, ArrayList<Rational>> {
 
 	private static final long serialVersionUID = 203595977536803285L;
 
-	private Game game_;
+	public Game game_;
 	public int player_;
 	
 	public Strategy(Game game, int player) { game_ = game; player_ = player; }
@@ -26,10 +26,13 @@ public class Strategy extends HashMap<GamePlay, ArrayList<Rational>> {
 		game_ = strategy.game_;
 		player_ = strategy.player_;
 		for (GamePlay game_play: strategy.keySet()) {
-			ArrayList<Bid> responses = game_play.next_moves(player_);
-			for (int i = 0; i < responses.size(); i++) {
-				//...
+			Bid response = strategy.get(game_play);
+			ArrayList<Rational> answer = new ArrayList<Rational>();
+			for (Bid bid: game_play.possible_bids()) {
+				if (bid.equals(response)) answer.add(Rational.ONE);
+				else answer.add(Rational.ZERO);
 			}
+			put(game_play,answer);
 		}
 	}
 	

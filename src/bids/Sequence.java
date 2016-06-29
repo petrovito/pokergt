@@ -94,6 +94,10 @@ public class Sequence extends ArrayList<Bid> {
 		}
 		return winnings;		
 	}
+
+	public ArrayList<Bid> possible_bids() {
+		return bid_system_.possible_moves(this);
+	}
 	
 	/*
 	@Override

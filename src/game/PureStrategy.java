@@ -2,6 +2,8 @@ package game;
 
 import java.util.HashMap;
 
+import org.jscience.mathematics.number.Rational;
+
 import bids.Bid;
 
 public class PureStrategy extends HashMap<GamePlay, Bid> {
@@ -10,6 +12,7 @@ public class PureStrategy extends HashMap<GamePlay, Bid> {
 	
 	protected Game game_;
 	public int player_;
+	public Rational value;
 	
 	public PureStrategy(Game game, int player) { game_ = game; player_ = player; }
 	
