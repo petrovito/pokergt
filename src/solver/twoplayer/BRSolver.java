@@ -10,6 +10,7 @@ import bids.Sequence;
 import dealers.Dealing;
 import game.GamePlay;
 import game.PureStrategy;
+import game.Strategy;
 import game.twoplayer.TwoPlayerGame;
 
 public class BRSolver {
@@ -90,8 +91,108 @@ public class BRSolver {
 	
 	
 	public ArrayList<Constraint> strategy_constraints(int player) {
+		ArrayList<Constraint> constraints = new ArrayList<Constraint>();
+		int length = recursive_strategy_constrains(constraints, player, 0,-1, new GamePlay(game_));
+		for (Constraint constraint: constraints) {
+			constraint.set_size(length+1);
+		}
+		return constraints;
+	}
+
+
+	private int recursive_strategy_constrains(ArrayList<Constraint> constraints, int player, 
+			int actual_index, int parent_index, GamePlay game_play) {
+		if (game_play.is_game_end()) return 0;
+		int delta_index = 0;
+		if (game_play.is_bidding_end()) {
+			for (Dealing dealing: game_play.dealing_.next_dealings(player)) {
+				GamePlay new_game_play = game_play.copy(dealing);
+				new_game_play.add(new Sequence(game_play.game_.biddings_.get(0)));
+				delta_index += recursive_strategy_constrains(constraints, player,
+						actual_index+delta_index,parent_index,new_game_play);
+			}
+			return delta_index;			
+		}
+		if (game_play.next_player() != player) {
+			ArrayList<Bid> possible_bids = game_play.possible_bids();
+			for (int i = 0; i < possible_bids.size(); i++) {
+				GamePlay new_game_play = game_play.copy(possible_bids.get(i));
+				delta_index += recursive_strategy_constrains(constraints, player, actual_index, parent_index,
+						new_game_play);
+			}
+			return delta_index;
+		}
+		ArrayList<Bid> bids = game_play.possible_bids();
+		Constraint constraint = new Constraint();
+		if (parent_index==-1) constraint.add_to(-1, Rational.ONE);
+		else constraint.add_to(parent_index, Rational.ONE.opposite());
+		int new_actual_index = actual_index+bids.size();
+		for (int i = 0; i < bids.size(); i++) {
+			constraint.add_to(actual_index+i, Rational.ONE);
+			GamePlay new_game_play = game_play.copy(bids.get(i));
+			new_actual_index += recursive_strategy_constrains(constraints, player, new_actual_index,
+					actual_index+i, new_game_play);
+		}
+		constraints.add(constraint);
+		return new_actual_index-actual_index;		
+	}
+	
+	
+	
+	public Strategy vector_to_strategy(ArrayList<Rational> vector, int player) {
+		Strategy strategy = new Strategy(game_,player);
+		recursive_vector_to_strategy(vector,strategy,0,0, new GamePlay(game_));
+		return strategy;
+	}
+	
+	
+	private int recursive_vector_to_strategy(ArrayList<Rational> vector, Strategy strategy,
+			int actual_index, int parent_index, GamePlay game_play) {
+		if (game_play.is_game_end()) return 0;
+		int delta_index = 0;
+		if (game_play.is_bidding_end()) {
+			for (Dealing dealing: game_play.dealing_.next_dealings(strategy.player_)) {
+				GamePlay new_game_play = game_play.copy(dealing);
+				new_game_play.add(new Sequence(game_play.game_.biddings_.get(0)));
+				delta_index += recursive_vector_to_strategy(vector, strategy,
+						actual_index+delta_index,parent_index,new_game_play);
+			}
+			return delta_index;			
+		}
+		if (game_play.next_player() != strategy.player_) {
+			ArrayList<Bid> possible_bids = game_play.possible_bids();
+			for (int i = 0; i < possible_bids.size(); i++) {
+				GamePlay new_game_play = game_play.copy(possible_bids.get(i));
+				delta_index += recursive_vector_to_strategy(vector, strategy, actual_index, parent_index,
+						new_game_play);
+			}
+			return delta_index;
+		}
+		ArrayList<Bid> bids = game_play.possible_bids();
+		int new_actual_index = actual_index+bids.size();
+		Rational sum = Rational.ZERO;
+		for (int i = 0; i < bids.size(); i++) {
+			sum = sum.plus(vector.get(actual_index+i));
+			GamePlay new_game_play = game_play.copy(bids.get(i));
+			new_actual_index += recursive_vector_to_strategy(vector, strategy, new_actual_index,
+					actual_index+i, new_game_play);
+		}
+		ArrayList<Rational> distribution = new ArrayList<Rational>();
+		for (int i = 0; i < bids.size(); i++) {
+			distribution.add(vector.get(actual_index+i).divide(sum));
+		}
+		strategy.put(game_play, distribution);
+		return new_actual_index-actual_index;		
+	}
+
+
+	public void equilibrium(int player) {		
+		ArrayList<Constraint> br_constraints = new ArrayList<Constraint>();
+		br_constraints.add(constraintOf(game_.best_response(game_.first_strategy(player))));
+		ArrayList<Constraint> strategy_constraints = strategy_constraints(player);
 		
 	}
+	
 	
 
 }

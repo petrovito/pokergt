@@ -13,6 +13,7 @@ public class Strategy extends HashMap<GamePlay, ArrayList<Rational>> {
 
 	public Game game_;
 	public int player_;
+	public Rational value;
 	
 	public Strategy(Game game, int player) { game_ = game; player_ = player; }
 	

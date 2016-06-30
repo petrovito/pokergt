@@ -10,6 +10,10 @@ public class Constraint extends ArrayList<Rational> {
 	
 	
 	public Rational constant_ = Rational.ZERO;
+
+	public Constraint() {}
+	
+	public Constraint(int length) {set_size(length);}
 	
 	public void to_integer() {
 		for (int i = 0; i < size(); i++) {
@@ -35,7 +39,8 @@ public class Constraint extends ArrayList<Rational> {
 			constant_ = constant_.plus(r);
 			return;
 		}
-		for (int i = 0; i < index+1-size(); i++) {
+		int adds_need = index+1-size();
+		for (int i = 0; i < adds_need; i++) {
 			add(Rational.ZERO);
 		}
 		set(index,get(index).plus(r));
@@ -44,6 +49,13 @@ public class Constraint extends ArrayList<Rational> {
 	@Override
 	public String toString() {
 		return super.toString()+"::"+constant_;
+	}
+
+	public void set_size(int length) {
+		int adds_need = length-size();
+		for (int i = 0; i < adds_need; i++) {
+			add(Rational.ZERO);
+		}
 	}
 	
 }
