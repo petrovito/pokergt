@@ -1,5 +1,13 @@
 package test;
 
+import org.jscience.mathematics.number.Rational;
+
+import bids.Bid;
+import bids.Sequence;
+import dealers.Card;
+import dealers.Deal;
+import dealers.Dealing;
+import game.GamePlay;
 import game.Strategy;
 
 public class TestStrategy {
@@ -9,9 +17,15 @@ public class TestStrategy {
 	
 	public static void main(String[] args) {
 		System.out.println("Test Strategy");
-		System.out.println(test_strategy);
-		System.out.println(TestGame.test_game.best_response(test_strategy));
+		Dealing d2 = new Dealing(TestDealer.test_dealer,new Deal(1, new Card(2)));
+		Dealing d3 = new Dealing(TestDealer.test_dealer,new Deal(1, new Card(3)));
+		Sequence seq = new Sequence(TestBidSystem.test_bids,Bid.RAISE(Rational.valueOf(2, 1), 0));
+		assert TestGame.test_game.best_response(test_strategy).get(new GamePlay(TestGame.test_game,d2,seq)).equals(
+				Bid.FOLD(1));
+		assert TestGame.test_game.best_response(test_strategy).get(new GamePlay(TestGame.test_game,d3,seq)).equals(
+				Bid.CALL(1));
 		System.out.println("OK");
+		
 	}
 	
 	

@@ -1,6 +1,7 @@
 package bids;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.jscience.mathematics.number.Rational;
 
@@ -11,8 +12,18 @@ public class Sequence extends ArrayList<Bid> {
 	private BidSystem bid_system_;
 	public ArrayList<Rational> equities_;
 	private Rational to_call_;
-	
+
 	public Sequence(BidSystem bid_system) { 
+		bid_system_ = bid_system;
+		equities_ = new ArrayList<Rational>();
+		for (Bid bid : bid_system.blinds()) {
+			equities_.add(bid.amount_);
+		}
+		to_call_=bid_system.blinds().get(bid_system.blinds().size()-1).amount_;
+	}
+
+	public Sequence(BidSystem bid_system, Bid... bids) { 
+		super(Arrays.asList(bids));
 		bid_system_ = bid_system;
 		equities_ = new ArrayList<Rational>();
 		for (Bid bid : bid_system.blinds()) {

@@ -6,6 +6,7 @@ public class RunAllTest {
 		TestBidSystem.main(args);
 		TestDealer.main(args);
 		TestGame.main(args);
+		TestStrategy.main(args);
 	}
 
 }
