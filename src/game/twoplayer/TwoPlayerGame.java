@@ -8,6 +8,7 @@ import org.jscience.mathematics.number.Rational;
 
 import bids.Bid;
 import bids.BidSystem;
+import bids.Sequence;
 import dealers.Dealer;
 import dealers.Dealing;
 import game.Game;
@@ -42,7 +43,8 @@ public class TwoPlayerGame extends Game {
 			for (Dealing dealing: game_play.dealing_.possible_opponent_dealings()) {
 				Rational p = possibilities.get(dealing);
 				if (!p.equals(Rational.ZERO)) {
-					EV = EV.plus(game_play.winnings(dealing).get(response.player_).times(dealing.possibility()).times(p));
+					EV = EV.plus(game_play.winnings(dealing).
+							get(response.player_).times(dealing.possibility()).times(p));
 				}
 			}
 			return EV;
@@ -57,22 +59,23 @@ public class TwoPlayerGame extends Game {
 			Rational EV = Rational.ZERO;
 			for (Dealing dealing: game_play.dealing_.next_dealings(response.player_)) {
 				GamePlay new_game_play = game_play.copy(dealing);
-				for (Bid bid: new_game_play.possible_bids()) 
-					EV = EV.plus(recursive_best_response(response, strategy, new_game_play.copy(bid), new_p));
+				new_game_play.add(new Sequence(biddings_.get(0)));
+				EV = EV.plus(recursive_best_response(response, strategy, new_game_play, new_p));
 			}
 			return EV;
 		}
 		if (game_play.next_player() != response.player_) {
 			Rational EV = Rational.ZERO;
 			ArrayList<Bid> possible_bids = game_play.possible_bids();
-			ArrayList<Rational> distribution = strategy.get(game_play);
 			for (int i = 0; i < possible_bids.size(); i++) {
-				GamePlay new_game_play = game_play.copy(possible_bids.get(i));
 				HashMap<Dealing, Rational> new_p = new HashMap<Dealing, Rational>();
 				for (Dealing dealing: possibilities.keySet()) {
+					ArrayList<Rational> distribution = 
+							strategy.get(game_play.opponent_dealing(dealing));
 					new_p.put(dealing, possibilities.get(dealing).times(distribution.get(i)));
 				}
-				recursive_best_response(response, strategy, new_game_play, new_p);
+				GamePlay new_game_play = game_play.copy(possible_bids.get(i));
+				EV = EV.plus(recursive_best_response(response, strategy, new_game_play, new_p));
 			}
 			return EV;
 		}

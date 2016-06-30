@@ -9,7 +9,7 @@ public class Dealing extends ArrayList<Deal> {
 	
 	private static final long serialVersionUID = 817816938083279142L;
 	
-	private Dealer dealer_;
+	public Dealer dealer_;
 	
 	public ArrayList<Card> all_cards() {
 		ArrayList<Card> cards = new ArrayList<Card>();

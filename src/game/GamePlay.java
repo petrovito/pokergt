@@ -13,7 +13,7 @@ public class GamePlay extends ArrayList<Sequence> {
 
 	private static final long serialVersionUID = -5216638401515725089L;
 	
-	private Game game_;
+	public Game game_;
 	public Dealing dealing_;
 	
 	public GamePlay(Game game) {
@@ -154,6 +154,22 @@ public class GamePlay extends ArrayList<Sequence> {
 	public int hashCode() {
 		if (dealing_.size()==0) return 0;
 		return dealing_.get(0).hashCode();
+	}
+
+	public GamePlay restrict_player(int player) {
+		GamePlay game_play = new GamePlay(this);
+		game_play.dealing_ = game_play.dealing_.restrict_player(player);
+		return game_play;
+	}
+
+	public GamePlay opponent_dealing(Dealing dealing) {
+		GamePlay game_play = new GamePlay(this);
+		game_play.dealing_ = dealing.copy();
+		return game_play;
+	}
+
+	public Rational possibility(Dealing opponent_dealing) {
+		return merge(opponent_dealing).dealing_.possibility();
 	}
 	
 

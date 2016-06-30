@@ -20,7 +20,7 @@ public class TestBidSystem {
 						new Bid[]{Bid.FOLD(0), Bid.RAISE(Rational.valueOf(2, 1), 0)})) ;
 			}
 			return new ArrayList<Bid>(Arrays.asList(
-					new Bid[] {Bid.CALL(1),Bid.FOLD(1)}));
+					new Bid[] {Bid.FOLD(1),Bid.CALL(1)}));
 		}
 		
 		@Override
