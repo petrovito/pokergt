@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import org.jscience.mathematics.number.Rational;
 
+import algebra.Constraint;
 import bids.Bid;
 import bids.Sequence;
 import dealers.Dealing;

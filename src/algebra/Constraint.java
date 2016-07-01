@@ -1,4 +1,4 @@
-package solver.twoplayer;
+package algebra;
 
 import java.util.ArrayList;
 
@@ -12,8 +12,22 @@ public class Constraint extends ArrayList<Rational> {
 	public Rational constant_ = Rational.ZERO;
 
 	public Constraint() {}
-	
+
 	public Constraint(int length) {set_size(length);}
+	
+	
+	public Constraint(Constraint c) {
+		super(c);
+		constant_ = c.constant_;
+	}
+	
+	public Constraint negation() {
+		Constraint c = new Constraint();
+		for (Rational r: this)
+			c.add(r.opposite());
+		c.constant_ = constant_.opposite();
+		return c;
+	}
 	
 	public void to_integer() {
 		for (int i = 0; i < size(); i++) {
@@ -57,5 +71,7 @@ public class Constraint extends ArrayList<Rational> {
 			add(Rational.ZERO);
 		}
 	}
-	
+
 }
+
+

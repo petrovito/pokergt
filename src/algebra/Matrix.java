@@ -1,6 +1,7 @@
 package algebra;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.jscience.mathematics.number.Rational;
 
@@ -15,9 +16,7 @@ public class Matrix {
 		this.m_ = new Rational[m][n];
 		row_num_ = m;
 		column_num_ = n;
-	}
-	
-	
+	}	
 	
 	public Matrix(ArrayList<ArrayList<Rational>> rows) {
 		m_ = new Rational[rows.size()][rows.get(0).size()];
@@ -36,19 +35,35 @@ public class Matrix {
 		column_num_ = matrix.column_num_;
 		m_ = matrix.m_.clone();
 	}
-
-
-
-	public Vector column(int index) {
-		Vector vector = new Vector(row_num_);
-		for (int i = 0; i < row_num_; i++) {
-			vector.v_[i] = m_[i][index]; 
-		}
-		return vector;
-	}
 	
-	public Vector row(int i) {
-		return new Vector(m_[i]);		
+	public Matrix next(Matrix matrix) {
+		Matrix m = new Matrix(row_num_,column_num_+matrix.column_num_);
+		for (int i = 0; i < row_num_; i++) {
+			int j = 0;
+			for (; j < column_num_; j++) {
+				m.m_[i][j] = m_[i][j];
+			}
+			for (; j < column_num_+matrix.column_num_; j++) {
+				m.m_[i][j] = matrix.m_[i][j-column_num_];
+			}
+		}
+		return m;
+	}
+
+	public Matrix under(Matrix matrix) {
+		Matrix m = new Matrix(row_num_+matrix.row_num_,column_num_);
+		int i = 0;
+		for (; i < row_num_; i++) {			
+			for (int j = 0; j < column_num_; j++) {
+				m.m_[i][j] = m_[i][j];
+			}
+		}
+		for (; i < row_num_+matrix.row_num_; i++) {			
+			for (int j = 0; j < column_num_; j++) {
+				m.m_[i][j] = matrix.m_[i-row_num_][j];
+			}
+		}
+		return m;
 	}
 	
 	
@@ -62,6 +77,30 @@ public class Matrix {
 		return m;
 	}
 	
+	
+	public static Matrix zero(int m, int n) {
+		Matrix matrix = new Matrix(m,n);
+		for (int i = 0; i < m; i++) {
+			for (int j = 0; j < n; j++) {
+				matrix.m_[i][j] = Rational.ZERO;
+			}			
+		}
+		return matrix;
+	}
+
+
+	public Vector column(int index) {
+		Vector vector = new Vector(row_num_);
+		for (int i = 0; i < row_num_; i++) {
+			vector.v_[i] = m_[i][index]; 
+		}
+		return vector;
+	}
+	
+	public Vector row(int i) {
+		return new Vector(m_[i]);		
+	}
+
 	
 	public Matrix elem_basis_transformation(int row, int col) {
 		Matrix m = new Matrix(row_num_,column_num_);
@@ -138,7 +177,7 @@ public class Matrix {
 					break;
 				}
 				if (j+1==column_num_) 
-					throw new ArrayIndexOutOfBoundsException("not invertible");
+					throw new ArithmeticException("not invertible");
 			}
 		}
 		return matrix.permute(lin_independents);		
@@ -150,7 +189,7 @@ public class Matrix {
 		Matrix m = new Matrix(row_num_, column_num_);
 		for (int i = 0; i < row_num_; i++) {
 			for (int j = 0; j < column_num_; j++) {
-				m.m_[order.get(i)][j] = m_[i][order.get(j)];
+				m.m_[order.get(i)][order.get(j)] = m_[i][j];
 			}
 		}
 		return m;
@@ -217,6 +256,18 @@ public class Matrix {
 		return m;
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Matrix) {
+			Matrix m = (Matrix) obj;
+			if (! (row_num_ == m.row_num_ && column_num_ == m.column_num_)) return false;
+			for (int i = 0; i < row_num_; i++) {
+				if (!Arrays.equals(m.m_[i], m_[i])) return false;
+			}
+			return true;
+		}
+		return super.equals(obj);
+	}
 	
 
 }

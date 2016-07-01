@@ -17,7 +17,7 @@ public class Simplex {
 	public Matrix A_;
 	public Vector b_, c_;
 	private Matrix B_inverse_;
-	private Vector b_base_, c_base_;
+	protected Vector b_base_, c_base_;
 	public Rational value_;
 	
 	
@@ -43,9 +43,11 @@ public class Simplex {
 		c_base_ = c_.subvector(actual_basis_).times(B_inverse_).times(A_).minus(c_);
 		value_  = c_.subvector(actual_basis_).scalar_product(b_base_);
 		while (!c_base_.is_non_negative()) {
-			/*System.out.println("ASD");
+			System.out.println("ASD");
 			System.out.println(value_);
 			System.out.println(actual_basis_);
+			System.out.println(A_.column_num_);
+			System.out.println(c_);
 			System.out.println(c_base_);
 			System.out.println(b_base_);//*/
 			Rational min_c = Rational.ZERO;
@@ -56,10 +58,11 @@ public class Simplex {
 					min_c = c_base_.v_[i];
 				}
 			}
+			System.out.println(argmin_c + ":" +min_c);
 			Vector a_p = (B_inverse_).times(A_.column(argmin_c));//quick?
+			System.out.println(argmin_c + ":" + a_p);
 			if (a_p.is_non_positive()) 
 				throw new ArithmeticException("unbounded obj fnc");
-			//System.out.println(argmin_c + ":" + a_p);
 			Rational b_ratio = Rational.valueOf(1000,1);
 			int argmin_p = -1;
 			for (int i = 0; i < a_p.dim_; i++) {
@@ -74,11 +77,11 @@ public class Simplex {
 				throw new ArithmeticException("small minimum, programming shit");
 			pivot(argmin_p, argmin_c, a_p, b_ratio);
 		}
-		/*System.out.println(value_);
+		System.out.println("ASDASDASD");
+		System.out.println(value_);
 		System.out.println(actual_basis_);
 		System.out.println(c_base_);
-		System.out.println(b_base_);
-		System.out.println("ASD");//*/
+		System.out.println(b_base_);//*/
 	}
 
 
@@ -110,6 +113,36 @@ public class Simplex {
 		B_inverse_ = m;
 		c_base_ = c_.subvector(actual_basis_).times(B_inverse_).times(A_).minus(c_);
 		value_  = c_.subvector(actual_basis_).scalar_product(b_base_);
+	}
+
+
+	public void find_initial_basis() {
+		Matrix A = A_.next(Matrix.unit(A_.row_num_));
+		for (int i = 0; i < A.row_num_; i++) {
+			if (!b_.v_[i].isPositive()) {
+				A.m_[i][i+A_.column_num_] = Rational.ONE.opposite();
+			}
+		}
+		Simplex simplex = new Simplex(A, b_, Vector.zero(
+				A_.column_num_).under(Vector.unit(A_.row_num_).multiply_scalar(
+						Rational.valueOf(-1,1))));
+		ArrayList<Integer> b = new ArrayList<Integer>();
+		for (int i = A_.column_num_; i < A_.column_num_+A_.row_num_; i++) {
+			b.add(i);
+		}
+		simplex.set_initial_basis(b);
+		simplex.solve();
+		if (simplex.value_.equals(Rational.ZERO)) {
+			actual_basis_ = simplex.actual_basis_;
+			return;
+		}
+		throw new ArithmeticException("model infeasible");
+	}
+
+
+	public boolean has_primal_basis() {
+		if (actual_basis_ == null) return false;
+		return A_.submatrix_rows(actual_basis_).inverse().times(b_).is_non_negative();
 	}
 	
 
