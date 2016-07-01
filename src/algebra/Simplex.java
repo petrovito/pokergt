@@ -36,7 +36,7 @@ public class Simplex {
 	
 	public void solve() {
 		if (actual_basis_ == null) throw new ArithmeticException("no basis");
-		B_inverse_ = A_.submatrix_rows(actual_basis_).inverse();
+		B_inverse_ = A_.submatrix_columns(actual_basis_).inverse();
 		b_base_ = B_inverse_.times(b_);
 		if (! b_base_.is_non_negative())
 			throw new ArithmeticException("not a primal basis");
@@ -91,12 +91,11 @@ public class Simplex {
 		for (int j = 0; j < B_inverse_.column_num_; j++) {
 			if (j == argmin_p) {
 				m.m_[argmin_p][argmin_p] = a_p.v_[argmin_p].inverse();
-				b_base_.v_[argmin_p] = b_ratio;
 				continue;
 			}
 			m.m_[argmin_p][j] = B_inverse_.m_[argmin_p][j].divide(a_p.v_[argmin_p]);
 		}
-		//System.out.println(m.row(argmin_p));
+		b_base_.v_[argmin_p] = b_ratio;
 		for (int i = 0; i < B_inverse_.row_num_; i++) {
 			if (i == argmin_p) continue;
 			for (int j = 0; j < B_inverse_.column_num_; j++) {
@@ -108,21 +107,37 @@ public class Simplex {
 			}
 			b_base_.v_[i] = b_base_.v_[i].minus(b_ratio.times(a_p.v_[i]));
 		}
-		//System.out.println(m.row(1-argmin_p));
+		System.out.println(A_.submatrix_columns(actual_basis_).rank());
 		actual_basis_.set(argmin_p, argmin_c);
-		B_inverse_ = m;
+		B_inverse_ = A_.submatrix_columns(actual_basis_).inverse();
+		System.out.println(b_ratio);
+		Matrix matrix = A_.submatrix_columns(actual_basis_).times(m);
+		for (int i = 0; i < matrix.column_num_; i++) {
+			for (int j = 0; j < matrix.column_num_; j++) {
+				System.out.print(" "+matrix.m_[i][j]);
+			}			
+			System.out.println("");
+		}
+		System.out.println(m.rank());
+		//assert m.equals(A_.submatrix_columns(actual_basis_).inverse());
+		System.out.println(actual_basis_);
+		System.out.println(c_.subvector(actual_basis_));
 		c_base_ = c_.subvector(actual_basis_).times(B_inverse_).times(A_).minus(c_);
+		System.out.println(c_base_);
+		assert c_base_.subvector(actual_basis_).equals(Vector.zero(B_inverse_.column_num_));
 		value_  = c_.subvector(actual_basis_).scalar_product(b_base_);
 	}
 
 
 	public void find_initial_basis() {
-		Matrix A = A_.next(Matrix.unit(A_.row_num_));
-		for (int i = 0; i < A.row_num_; i++) {
+		for (int i = 0; i < A_.row_num_; i++) {
 			if (!b_.v_[i].isPositive()) {
-				A.m_[i][i+A_.column_num_] = Rational.ONE.opposite();
+				b_.v_[i] = b_.v_[i].opposite();
+				for (int j = 0; j < A_.column_num_; j++)
+					A_.m_[i][j] = A_.m_[i][j].opposite();
 			}
 		}
+		Matrix A = A_.next(Matrix.unit(A_.row_num_));
 		Simplex simplex = new Simplex(A, b_, Vector.zero(
 				A_.column_num_).under(Vector.unit(A_.row_num_).multiply_scalar(
 						Rational.valueOf(-1,1))));

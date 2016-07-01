@@ -247,14 +247,25 @@ public class Matrix {
 
 	
 	public Matrix submatrix_rows(ArrayList<Integer> rows) {
-		Matrix m = new Matrix(row_num_,rows.size());
-		for (int i = 0; i < row_num_; i++) {
+		Matrix m = new Matrix(rows.size(),row_num_);
+		for (int i = 0; i < column_num_; i++) {
 			for (int j = 0; j < rows.size(); j++) {
-				m.m_[i][j] = m_[i][rows.get(j)];
+				m.m_[i][j] = m_[rows.get(j)][i];
 			}
 		}
 		return m;
 	}
+
+	public Matrix submatrix_columns(ArrayList<Integer> columns) {
+		Matrix m = new Matrix(row_num_,columns.size());
+		for (int i = 0; i < row_num_; i++) {
+			for (int j = 0; j < columns.size(); j++) {
+				m.m_[i][j] = m_[i][columns.get(j)];
+			}
+		}
+		return m;
+	}
+	
 	
 	@Override
 	public boolean equals(Object obj) {
@@ -262,12 +273,14 @@ public class Matrix {
 			Matrix m = (Matrix) obj;
 			if (! (row_num_ == m.row_num_ && column_num_ == m.column_num_)) return false;
 			for (int i = 0; i < row_num_; i++) {
+				//if (i>2) continue;
 				if (!Arrays.equals(m.m_[i], m_[i])) return false;
+				//if (!Arrays.asList(m_).contains(m.m_[i])) return false;
 			}
 			return true;
 		}
 		return super.equals(obj);
 	}
 	
-
+	
 }

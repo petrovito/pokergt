@@ -22,7 +22,7 @@ public class TestSimplex {
 				Rational.valueOf(0, 1) };
 		System.out.println(b0.inverse().column(0));
 		System.out.println(b0.inverse().column(1));
-		System.out.println(b0.inverse().column(2));*/
+		System.out.println(b0.inverse().column(2));
 		Matrix A = new Matrix(2,4);
 		A.m_[0] = new Rational [] { Rational.valueOf(2, 1), Rational.valueOf(1, 1),
 				Rational.valueOf(1, 1) ,Rational.valueOf(0, 1) };
@@ -42,7 +42,7 @@ public class TestSimplex {
 		basis.add(3);
 		simplex.find_initial_basis();
 		simplex.solve();
-		assert simplex.value_.equals(Rational.valueOf(2,3));
+		assert simplex.value_.equals(Rational.valueOf(2,3));*/
 		
 		LP lp = new LP();
 		lp.add_equalities(TestBRSolver.test_brsolver.strategy_constraints(0));
