@@ -40,8 +40,8 @@ public class Matrix {
 
 
 	public Vector column(int index) {
-		Vector vector = new Vector(m_[0].length);
-		for (int i = 0; i < m_[0].length; i++) {
+		Vector vector = new Vector(row_num_);
+		for (int i = 0; i < row_num_; i++) {
 			vector.v_[i] = m_[i][index]; 
 		}
 		return vector;
@@ -132,7 +132,7 @@ public class Matrix {
 		Matrix matrix = new Matrix(this);
 		for (int i = 0; i < row_num_; i++) {
 			for (int j = 0; j < column_num_; j++) {
-				if (!matrix.m_[i][j].equals(Rational.ZERO)) {
+				if (! lin_independents.contains(j) &&!matrix.m_[i][j].equals(Rational.ZERO)) {
 					matrix = matrix.inverse_pivot(i, j);
 					lin_independents.add(j);
 					break;
@@ -141,8 +141,19 @@ public class Matrix {
 					throw new ArrayIndexOutOfBoundsException("not invertible");
 			}
 		}
-		return row_permutation(lin_independents).times(matrix).
-				times(column_permutation(lin_independents));		
+		return matrix.permute(lin_independents);		
+	}
+
+
+
+	public Matrix permute(ArrayList<Integer> order) {
+		Matrix m = new Matrix(row_num_, column_num_);
+		for (int i = 0; i < row_num_; i++) {
+			for (int j = 0; j < column_num_; j++) {
+				m.m_[order.get(i)][j] = m_[i][order.get(j)];
+			}
+		}
+		return m;
 	}
 
 
@@ -157,6 +168,16 @@ public class Matrix {
 			}
 		}
 		return m;
+	}
+	
+	public Vector times(Vector vector) {
+		Vector v = new Vector(row_num_);
+		for (int i = 0; i < row_num_; i++) {
+			v.v_[i] = Rational.ZERO;
+			for (int k = 0; k < column_num_; k++)
+				v.v_[i] = v.v_[i].plus(m_[i][k].times(vector.v_[k]));
+		}
+		return v;
 	}
 
 
@@ -184,6 +205,17 @@ public class Matrix {
 		return m;
 	}
 	
+
+	
+	public Matrix submatrix_rows(ArrayList<Integer> rows) {
+		Matrix m = new Matrix(row_num_,rows.size());
+		for (int i = 0; i < row_num_; i++) {
+			for (int j = 0; j < rows.size(); j++) {
+				m.m_[i][j] = m_[i][rows.get(j)];
+			}
+		}
+		return m;
+	}
 	
 	
 

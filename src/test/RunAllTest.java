@@ -8,6 +8,8 @@ public class RunAllTest {
 		TestGame.main(args);
 		TestStrategy.main(args);
 		TestBRSolver.main(args);
+		TestMatrix.main(args);
+		TestSimplex.main(args);
 	}
 
 }
