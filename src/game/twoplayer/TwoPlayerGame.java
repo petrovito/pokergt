@@ -43,8 +43,8 @@ public class TwoPlayerGame extends Game {
 			for (Dealing dealing: game_play.dealing_.possible_opponent_dealings()) {
 				Rational p = possibilities.get(dealing);
 				if (!p.equals(Rational.ZERO)) {
-					EV = EV.plus(game_play.winnings(dealing).
-							get(response.player_).times(dealing.possibility()).times(p));
+					EV = EV.plus(game_play.winnings(dealing).get(response.player_).
+							times(dealing.merge(game_play.dealing_).possibility()).times(p));
 				}
 			}
 			return EV;

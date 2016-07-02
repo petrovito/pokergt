@@ -22,7 +22,7 @@ public class TestSimplex {
 				Rational.valueOf(0, 1) };
 		System.out.println(b0.inverse().column(0));
 		System.out.println(b0.inverse().column(1));
-		System.out.println(b0.inverse().column(2));
+		System.out.println(b0.inverse().column(2));*/
 		Matrix A = new Matrix(2,4);
 		A.m_[0] = new Rational [] { Rational.valueOf(2, 1), Rational.valueOf(1, 1),
 				Rational.valueOf(1, 1) ,Rational.valueOf(0, 1) };
@@ -40,25 +40,31 @@ public class TestSimplex {
 		ArrayList<Integer> basis = new ArrayList<Integer>();
 		basis.add(2);
 		basis.add(3);
-		simplex.find_initial_basis();
-		simplex.solve();
-		assert simplex.value_.equals(Rational.valueOf(2,3));*/
+		simplex.find_initial_primal_basis();
+		simplex.solve_primal();
+		assert simplex.value_.equals(Rational.valueOf(2,3));
 		
 		LP lp = new LP();
 		lp.add_equalities(TestBRSolver.test_brsolver.strategy_constraints(0));
 		Constraint con = TestBRSolver.test_brsolver.constraintOf(
 				TestGame.test_game.best_response(TestStrategy.test_strategy));
 		//con.constant_=Rational.valueOf(66,338);
-		System.out.println(con);
+		//System.out.println(con);
 		lp.add_greater_than(con);
 		ArrayList<Rational> obj = new ArrayList<Rational>();
 		for (int i = 0; i < con.size()-1; i++)
 			obj.add(Rational.ZERO);
 		obj.add(Rational.ONE);
 		lp.set_objective(obj);
-		//lp.set_unbounded(obj.size()-1);
+		lp.set_unbounded(obj.size()-1);
 		lp.solve();
-		assert lp.value_.equals(Rational.valueOf(-129,338));
+		/*Constraint con2 = TestBRSolver.test_brsolver.constraintOf(
+				TestGame.test_game.best_response(TestStrategy.test_strategy));
+		con2.constant_=Rational.valueOf(100,1);
+		lp.add_greater_than(con2);
+		lp.solve();
+		System.out.println(lp.value_);*/
+		assert lp.value_.equals(Rational.valueOf(24,169));
 	}
 	
 	

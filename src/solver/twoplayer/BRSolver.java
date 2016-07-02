@@ -6,6 +6,7 @@ import java.util.HashMap;
 import org.jscience.mathematics.number.Rational;
 
 import algebra.Constraint;
+import algebra.LP;
 import bids.Bid;
 import bids.Sequence;
 import dealers.Dealing;
@@ -187,12 +188,35 @@ public class BRSolver {
 	}
 
 
-	public void equilibrium(int player) {		
-		ArrayList<Constraint> br_constraints = new ArrayList<Constraint>();
-		br_constraints.add(constraintOf(game_.best_response(game_.first_strategy(player))));
+	public Strategy equilibrium(int player) {		
 		ArrayList<Constraint> strategy_constraints = strategy_constraints(player);
-		
+		LP lp = new LP();
+		lp.add_equalities(strategy_constraints);
+		Constraint con = constraintOf(game_.best_response(game_.first_strategy(player)));
+		lp.add_greater_than(con);
+		lp.set_unbounded(strategy_constraints.get(0).size()-1);
+		ArrayList<Rational> obj = new ArrayList<Rational>();
+		for (int i = 0; i < con.size()-1; i++)
+			obj.add(Rational.ZERO);
+		obj.add(Rational.ONE);
+		lp.set_objective(obj);
+		lp.set_unbounded(obj.size()-1);
+		Strategy strategy;
+		PureStrategy br;
+		do {
+			lp.solve();
+			ArrayList<Rational> lp_var = lp.variables();
+			strategy = vector_to_strategy(lp_var, player);
+			strategy.value = lp_var.get(lp_var.size()-1);
+			br = game_.best_response(strategy);
+			lp.add_greater_than(constraintOf(br));
+			//System.out.println(strategy);
+			//System.out.println(br);
+			//System.out.println(value+", "+br.value.opposite());			
+		} while (!strategy.value.equals(br.value.opposite()));		
+		return strategy;
 	}
+	
 	
 	
 

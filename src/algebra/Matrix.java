@@ -189,7 +189,7 @@ public class Matrix {
 		Matrix m = new Matrix(row_num_, column_num_);
 		for (int i = 0; i < row_num_; i++) {
 			for (int j = 0; j < column_num_; j++) {
-				m.m_[order.get(i)][order.get(j)] = m_[i][j];
+				m.m_[order.get(i)][j] = m_[i][order.get(j)];
 			}
 		}
 		return m;

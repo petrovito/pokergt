@@ -13,6 +13,7 @@ public class LP {
 	public boolean maximize_ = true;
 	ArrayList<Constraint> equalities_ = new ArrayList<Constraint>();
 	ArrayList<Constraint> less_than_ = new ArrayList<Constraint>();
+	ArrayList<Constraint> less_than_new_ = new ArrayList<Constraint>();
 	ArrayList<Rational> obj_;
 	ArrayList<Integer> unbounded_ = new ArrayList<Integer>();
 	public Rational value_;
@@ -22,21 +23,26 @@ public class LP {
 	}
 
 	public void add_less_than(Constraint constraint) {
-		less_than_.add(constraint);
+		less_than_new_.add(constraint);
 	}
 
 	public void add_greater_than(ArrayList<Constraint> gt) {
 		for (Constraint c: gt) {
-			less_than_.add(c.negation());
+			less_than_new_.add(c.negation());
 		}
 	}
 	
 	public void add_greater_than(Constraint con) {
-		less_than_.add(con.negation());
+		less_than_new_.add(con.negation());
 	}
-	
+
 	public void set_unbounded(int i) {
-		unbounded_.add(i);
+		if (!unbounded_.contains(i));
+			unbounded_.add(i);
+	}
+
+	public void set_bounded(int i) {
+		unbounded_.remove(i);
 	}
 	
 	
@@ -45,6 +51,9 @@ public class LP {
 	}
 	
 	private void set_datas() {
+		int old_len = less_than_.size();
+		less_than_.addAll(less_than_new_);
+		less_than_new_.clear();
 		ArrayList<Rational> obj = new ArrayList<>(obj_);
 		for (int i: unbounded_) {
 			obj.add(obj.get(i).opposite());
@@ -81,11 +90,6 @@ public class LP {
 				}
 				b_eq.v_[i] = c.constant_;
 			}
-			if (lt == 0)  {
-				A_ = A_eq;
-				b_ = b_eq;
-				return;
-			}
 		}
 		if (lt > 0) {
 			length_ = less_than.get(0).size()+lt;
@@ -99,28 +103,43 @@ public class LP {
 				b_lt.v_[i] = c.constant_;
 			}
 			A_lt = A_lt.next(Matrix.unit(lt));
-			if (eq == 0)  {
-				A_ = A_lt;
-				b_ = b_lt;
-				return;
-			}
+		}
+		if (lt == 0)  {
+			A_ = A_eq;
+			b_ = b_eq;
+		}
+		if (eq == 0)  {
+			A_ = A_lt;
+			b_ = b_lt;
+			return;
 		}
 		A_eq = A_eq.next(Matrix.zero(eq,lt));
 		A_ = A_eq.under(A_lt);
 		b_ = b_eq.under(b_lt);
+		if (simplex_ != null) {
+			ArrayList<Integer> b = simplex_.actual_basis_;
+			for (int i = A_.column_num_-(less_than.size()-old_len); i < A_.column_num_; i++) {
+				b.add(i);
+			}
+			simplex_ = new Simplex(A_, b_, c_);
+			simplex_.set_initial_basis(b);
+			simplex_ = new Simplex(A_, b_, c_);
+			return;
+		}
+		simplex_ = new Simplex(A_, b_, c_);
 	}
 	
 	public void solve() {
 		set_datas();
-		if (simplex_ != null) {
-			simplex_.solve();
-		}
-		simplex_ = new Simplex(A_, b_, c_);
-		if (!simplex_.has_primal_basis())
-			simplex_.find_initial_basis();
-		simplex_.solve();
+		if (!simplex_.has_primal_basis()) {
+			if (simplex_.has_dual_basis()) {
+				simplex_.solve_dual();
+			} else {
+				simplex_.find_initial_primal_basis();
+				simplex_.solve_primal();				
+			}
+		};
 		value_ = simplex_.value_;
-		System.out.println(variables());
 	}
 	
 	
