@@ -10,6 +10,7 @@ public class RunAllTest {
 		TestBRSolver.main(args);
 		TestMatrix.main(args);
 		TestSimplex.main(args);
+		TestEllipsoid.main(args);
 	}
 
 }

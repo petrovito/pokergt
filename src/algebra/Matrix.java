@@ -2,6 +2,7 @@ package algebra;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import org.jscience.mathematics.number.Rational;
 
@@ -10,7 +11,7 @@ public class Matrix {
 	public Rational[][] m_;
 	public int row_num_;
 	public int column_num_;
-	public ArrayList<Integer> lin_independents = new ArrayList<Integer>();
+	public HashMap<Integer, Integer> lin_independents = new HashMap<Integer, Integer>();
 	
 	public Matrix(int m, int n) {
 		this.m_ = new Rational[m][n];
@@ -77,6 +78,16 @@ public class Matrix {
 		return m;
 	}
 	
+	public static Matrix diagonal(Rational r, int n) {
+		Matrix m = new Matrix(n,n);
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				m.m_[i][j] = (i==j) ? r : Rational.ZERO;
+			}			
+		}
+		return m;
+	}
+	
 	
 	public static Matrix zero(int m, int n) {
 		Matrix matrix = new Matrix(m,n);
@@ -99,6 +110,36 @@ public class Matrix {
 	
 	public Vector row(int i) {
 		return new Vector(m_[i]);		
+	}
+	
+	public Matrix multiply_scalar(Rational r) {
+		Matrix m = new Matrix(row_num_,column_num_);
+		for (int i = 0; i < row_num_; i++) {
+			for (int j = 0; j < column_num_; j++) {
+				m.m_[i][j] = m_[i][j].times(r);
+			}
+		}
+		return m;
+	}
+
+	public Matrix minus(Matrix matrix) {
+		Matrix m = new Matrix(row_num_,column_num_);
+		for (int i = 0; i < row_num_; i++) {
+			for (int j = 0; j < column_num_; j++) {
+				m.m_[i][j] = m_[i][j].minus(matrix.m_[i][j]);
+			}
+		}
+		return m;
+	}
+	
+	public Matrix plus(Matrix matrix) {
+		Matrix m = new Matrix(row_num_,column_num_);
+		for (int i = 0; i < row_num_; i++) {
+			for (int j = 0; j < column_num_; j++) {
+				m.m_[i][j] = m_[i][j].plus(matrix.m_[i][j]);
+			}
+		}
+		return m;
 	}
 
 	
@@ -126,13 +167,13 @@ public class Matrix {
 	
 	
 	public int rank() {
-		lin_independents = new ArrayList<Integer>();
+		lin_independents = new HashMap<Integer, Integer>();
 		Matrix matrix = new Matrix(this);
 		for (int i = 0; i < row_num_; i++) {
 			for (int j = 0; j < column_num_; j++) {
 				if (!matrix.m_[i][j].equals(Rational.ZERO)) {
 					matrix = matrix.elem_basis_transformation(i, j);
-					lin_independents.add(j);
+					lin_independents.put(i,j);
 					break;
 				}
 			}
@@ -167,20 +208,20 @@ public class Matrix {
 	
 	
 	public Matrix inverse() {
-		lin_independents = new ArrayList<Integer>();
+		lin_independents = new HashMap<Integer, Integer>();
 		Matrix matrix = new Matrix(this);
 		for (int i = 0; i < row_num_; i++) {
 			for (int j = 0; j < column_num_; j++) {
-				if (! lin_independents.contains(j) &&!matrix.m_[i][j].equals(Rational.ZERO)) {
+				if (! lin_independents.values().contains(j) &&!matrix.m_[i][j].equals(Rational.ZERO)) {
 					matrix = matrix.inverse_pivot(i, j);
-					lin_independents.add(j);
+					lin_independents.put(i,j);
 					break;
 				}
 				if (j+1==column_num_) 
 					throw new ArithmeticException("not invertible");
 			}
 		}
-		return matrix.permute(lin_independents);		
+		return matrix.permute(new ArrayList<Integer>(lin_independents.values()));		
 	}
 
 
@@ -281,6 +322,48 @@ public class Matrix {
 		}
 		return super.equals(obj);
 	}
+	
+	
+	public Matrix kernel() {
+		lin_independents = new HashMap<Integer, Integer>();
+		Matrix matrix = new Matrix(this);
+		for (int i = 0; i < row_num_; i++) {
+			for (int j = 0; j < column_num_; j++) {
+				if (! lin_independents.values().contains(j) && !matrix.m_[i][j].equals(Rational.ZERO)) {
+					matrix = matrix.elem_basis_transformation(i, j);
+					lin_independents.put(i,j);
+					break;
+				}
+			}
+		}
+		Matrix m = new Matrix(column_num_,column_num_-lin_independents.size());
+
+		int col = 0;
+		for (int j = 0; j < m.column_num_; j++) {
+			while (lin_independents.containsValue(col))
+				col++;
+			for (int i = 0; i < m.row_num_; i++) {
+				if (! lin_independents.containsValue(i)) {
+					if (i==col)
+						m.m_[i][j]=Rational.valueOf(-1,1);
+					else
+						m.m_[i][j]=Rational.ZERO;
+				} else {
+					m.m_[lin_independents.get(i)][j]=matrix.m_[i][col];
+				}
+			}
+			col++;
+		}
+		return m;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 }

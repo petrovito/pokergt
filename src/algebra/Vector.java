@@ -45,6 +45,16 @@ public class Vector {
 		}
 		return r;
 	}
+	
+	public Matrix matrix_product(Vector v) {
+		Matrix m = new Matrix(dim_,v.dim_);
+		for (int i = 0; i < m.row_num_; i++) {
+			for (int j = 0; j < m.column_num_; j++) {
+				m.m_[i][j] = v_[i].times(v.v_[j]);
+			}
+		}
+		return m;
+	}
 		
 	public Vector subvector(ArrayList<Integer> entry) {
 		Vector v = new Vector(entry.size());
