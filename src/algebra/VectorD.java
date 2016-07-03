@@ -1,6 +1,5 @@
 package algebra;
 
-import org.jscience.mathematics.number.Rational;
 
 public class VectorD {
 	

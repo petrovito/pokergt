@@ -1,10 +1,8 @@
 package test;
 
-import org.jscience.mathematics.number.Rational;
 
 import algebra.Ellipsoid;
 import algebra.SeparationOracle;
-import algebra.Vector;
 import algebra.VectorD;
 
 public class TestEllipsoid {
