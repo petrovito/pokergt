@@ -13,6 +13,13 @@ public class MatrixD {
 		column_num_ = n;
 	}	
 
+	public MatrixD(MatrixD matrix) {
+		row_num_ = matrix.row_num_;
+		column_num_ = matrix.column_num_;
+		m_ = matrix.m_.clone();
+	}
+	
+
 	public static MatrixD diagonal(double d, int n) {
 		MatrixD m = new MatrixD(n,n);
 		for (int i = 0; i < n; i++) {

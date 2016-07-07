@@ -1,7 +1,10 @@
 package test;
 
 
+import java.util.ArrayList;
+
 import algebra.Ellipsoid;
+import algebra.EllipsoidOptimizer;
 import algebra.SeparationOracle;
 import algebra.VectorD;
 
@@ -14,6 +17,10 @@ public class TestEllipsoid {
 	public static void main(String[] args) {
 		Ellipsoid ell = new Ellipsoid(test_sep, 2);
 		System.out.println(ell.is_feasible());
+		VectorD obj = new VectorD(new double[] {1,0});
+		EllipsoidOptimizer eo = new EllipsoidOptimizer(2, test_sep);
+		eo.set_objective(obj);
+		eo.find_optimum();
 	}
 
 }
@@ -30,8 +37,8 @@ class SEP implements SeparationOracle {
 	public VectorD violation() {
 		if (center.scalar_product(c1)>1)
 			return c1;
-		if (center.scalar_product(c2)>-0.9999)
-			return c2;
+		//if (center.scalar_product(c2)>-0.9999)
+		//	return c2;
 		if (center.scalar_product(e1)>0)
 			return e1;
 		if (center.scalar_product(e2)>0)
@@ -44,8 +51,8 @@ class SEP implements SeparationOracle {
 	public boolean is_in() {
 		if (center.scalar_product(c1)>1)
 			return false;
-		if (center.scalar_product(c2)>-0.9999)
-			return false;
+		//if (center.scalar_product(c2)>-0.9999)
+		//	return false;
 		if (center.scalar_product(e1)>0)
 			return false;
 		if (center.scalar_product(e2)>0)

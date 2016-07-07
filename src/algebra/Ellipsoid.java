@@ -23,8 +23,8 @@ public class Ellipsoid {
 	
 	
 	public boolean is_feasible() {
+		actual_num_ = 0;
 		while (actual_num_ < max_num_) {
-			System.out.println(center_);
 			sep_.set_center(center_);
 			if (sep_.is_in())
 				return true;

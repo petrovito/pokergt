@@ -20,6 +20,12 @@ public class VectorD {
 	}
 
 
+	public VectorD(VectorD center) {
+		dim_ = center.dim_;
+		v_ = center.v_.clone();
+	}
+
+
 	public VectorD times(MatrixD matrix) {
 		VectorD v = new VectorD(matrix.column_num_);
 		for (int i = 0; i < matrix.column_num_; i++) {
