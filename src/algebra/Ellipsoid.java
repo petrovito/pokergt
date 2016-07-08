@@ -14,7 +14,7 @@ public class Ellipsoid {
 	public Ellipsoid(SeparationOracle sep, int dimension) {
 		sep_ = sep;
 		dimension_ = dimension;
-		rads_ = MatrixD.diagonal(1, dimension);
+		rads_ = MatrixD.diagonal(1.1d, dimension);
 		center_ = VectorD.zero(dimension);
 		actual_num_ = 0;
 		max_num_ = 50*dimension*dimension;		

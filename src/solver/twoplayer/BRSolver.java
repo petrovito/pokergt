@@ -1,12 +1,14 @@
 package solver.twoplayer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.jscience.mathematics.number.Rational;
 
 import algebra.Constraint;
 import algebra.LP;
+import algebra.Vector;
 import bids.Bid;
 import bids.Sequence;
 import dealers.Dealing;
@@ -139,11 +141,20 @@ public class BRSolver {
 		return new_actual_index-actual_index;		
 	}
 	
-	
+
 	
 	public Strategy vector_to_strategy(ArrayList<Rational> vector, int player) {
 		Strategy strategy = new Strategy(game_,player);
 		recursive_vector_to_strategy(vector,strategy,0,0, new GamePlay(game_));
+		return strategy;
+	}
+	
+
+	
+	public Strategy vector_to_strategy(Vector vector, int player) {
+		Strategy strategy = new Strategy(game_,player);
+		ArrayList<Rational> vec = new ArrayList<Rational>(Arrays.asList(vector.v_));
+		recursive_vector_to_strategy(vec,strategy,0,0, new GamePlay(game_));
 		return strategy;
 	}
 	
@@ -184,6 +195,51 @@ public class BRSolver {
 			distribution.add(vector.get(actual_index+i).divide(sum));
 		}
 		strategy.put(game_play, distribution);
+		return new_actual_index-actual_index;		
+	}
+
+
+	
+	public Vector strategy_to_vector(Strategy strategy, int player) {
+		Constraint vector = new Constraint();
+		recursive_strategy_to_vector(vector,strategy,0,0, new GamePlay(game_), Rational.ONE);
+		vector.add(Rational.ONE.opposite());
+		return new Vector(vector);
+	}
+	
+	
+	private int recursive_strategy_to_vector(Constraint vector, Strategy strategy,
+			int actual_index, int parent_index, GamePlay game_play, Rational actual_poss) {
+		if (game_play.is_game_end()) return 0;
+		int delta_index = 0;
+		if (game_play.is_bidding_end()) {
+			for (Dealing dealing: game_play.dealing_.next_dealings(strategy.player_)) {
+				GamePlay new_game_play = game_play.copy(dealing);
+				new_game_play.add(new Sequence(game_play.game_.biddings_.get(0)));
+				delta_index += recursive_strategy_to_vector(vector, strategy,
+						actual_index+delta_index,parent_index,new_game_play, actual_poss);
+			}
+			return delta_index;			
+		}
+		if (game_play.next_player() != strategy.player_) {
+			ArrayList<Bid> possible_bids = game_play.possible_bids();
+			for (int i = 0; i < possible_bids.size(); i++) {
+				GamePlay new_game_play = game_play.copy(possible_bids.get(i));
+				delta_index += recursive_strategy_to_vector(vector, strategy, actual_index, parent_index,
+						new_game_play, actual_poss);
+			}
+			return delta_index;
+		}
+		ArrayList<Bid> bids = game_play.possible_bids();
+		int new_actual_index = actual_index+bids.size();
+		ArrayList<Rational> distribution = strategy.get(game_play);
+		for (int i = 0; i < bids.size(); i++) {
+			Rational new_poss = actual_poss.times(distribution.get(i));
+			vector.add_to(actual_index+i, new_poss);
+			GamePlay new_game_play = game_play.copy(bids.get(i));
+			new_actual_index += recursive_strategy_to_vector(vector, strategy, new_actual_index,
+					actual_index+i, new_game_play, new_poss);
+		}
 		return new_actual_index-actual_index;		
 	}
 

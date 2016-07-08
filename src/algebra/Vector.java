@@ -117,7 +117,7 @@ public class Vector {
 	@Override
 	public String toString() {
 		String s = "[ ";
-		for (Rational r: v_) s+= r.toString()+" ";
+		for (Rational r: v_) s+= r+" ";
 		return s+"]";
 	}
 	
@@ -142,6 +142,13 @@ public class Vector {
 		Vector v = new Vector(n);
 		for (int i = 0; i < n; i++)
 			v.v_[i]=Rational.ONE;
+		return v;
+	}
+
+	public Vector opposite() {
+		Vector v = new Vector(dim_);
+		for (int i = 0; i < dim_; i++) 
+			v.v_[i] = v_[i].opposite();
 		return v;
 	}
 	

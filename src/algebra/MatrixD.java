@@ -20,6 +20,20 @@ public class MatrixD {
 	}
 	
 
+
+	public VectorD column(int index) {
+		VectorD vector = new VectorD(row_num_);
+		for (int i = 0; i < row_num_; i++) {
+			vector.v_[i] = m_[i][index]; 
+		}
+		return vector;
+	}
+	
+	public VectorD row(int i) {
+		return new VectorD(m_[i]);		
+	}
+	
+
 	public static MatrixD diagonal(double d, int n) {
 		MatrixD m = new MatrixD(n,n);
 		for (int i = 0; i < n; i++) {
@@ -72,4 +86,21 @@ public class MatrixD {
 		}
 		return v;
 	}
+	
+	
+
+	
+	@Override
+	public String toString() {
+		String s = "";
+		for (int i = 0; i < row_num_; i++) {
+			s += row(i).toString()+"\n";
+		}
+		return s;
+	}
+	
+	
+	
+	
+	
 }

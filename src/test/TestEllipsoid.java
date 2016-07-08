@@ -1,12 +1,11 @@
 package test;
 
 
-import java.util.ArrayList;
-
 import algebra.Ellipsoid;
 import algebra.EllipsoidOptimizer;
 import algebra.SeparationOracle;
 import algebra.VectorD;
+import solver.twoplayer.EllipsoidSolver;
 
 public class TestEllipsoid {
 	
@@ -16,11 +15,14 @@ public class TestEllipsoid {
 	
 	public static void main(String[] args) {
 		Ellipsoid ell = new Ellipsoid(test_sep, 2);
-		System.out.println(ell.is_feasible());
+		assert ell.is_feasible();
 		VectorD obj = new VectorD(new double[] {1,0});
 		EllipsoidOptimizer eo = new EllipsoidOptimizer(2, test_sep);
 		eo.set_objective(obj);
-		eo.find_optimum();
+		System.out.println(eo.find_optimum());
+		
+		EllipsoidSolver es = new EllipsoidSolver(TestGame.test_game);
+		es.equilibrium();
 	}
 
 }

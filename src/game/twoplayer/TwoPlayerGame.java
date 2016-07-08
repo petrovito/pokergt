@@ -96,5 +96,12 @@ public class TwoPlayerGame extends Game {
 	}
 	
 	
+	
+	public Strategy optimize_on_best_response(PureStrategy best_response) {
+		//TODO constraints: eleg csak a tenyleges dontesi helyeken, obj, simplex
+		return null;....
+	}
+	
+	
 
 }

@@ -331,7 +331,7 @@ public class Matrix {
 			for (int j = 0; j < column_num_; j++) {
 				if (! lin_independents.values().contains(j) && !matrix.m_[i][j].equals(Rational.ZERO)) {
 					matrix = matrix.elem_basis_transformation(i, j);
-					lin_independents.put(i,j);
+					lin_independents.put(j,i);
 					break;
 				}
 			}
@@ -340,16 +340,16 @@ public class Matrix {
 
 		int col = 0;
 		for (int j = 0; j < m.column_num_; j++) {
-			while (lin_independents.containsValue(col))
+			while (lin_independents.containsKey(col))
 				col++;
 			for (int i = 0; i < m.row_num_; i++) {
-				if (! lin_independents.containsValue(i)) {
+				if (! lin_independents.containsKey(i)) {
 					if (i==col)
 						m.m_[i][j]=Rational.valueOf(-1,1);
 					else
 						m.m_[i][j]=Rational.ZERO;
 				} else {
-					m.m_[lin_independents.get(i)][j]=matrix.m_[i][col];
+					m.m_[i][j]=matrix.m_[lin_independents.get(i)][col];
 				}
 			}
 			col++;
@@ -359,6 +359,14 @@ public class Matrix {
 	
 	
 	
+	@Override
+	public String toString() {
+		String s = "";
+		for (int i = 0; i < row_num_; i++) {
+			s += row(i).toString()+"\n";
+		}
+		return s;
+	}
 	
 	
 	

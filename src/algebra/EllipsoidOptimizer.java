@@ -7,7 +7,7 @@ import org.jscience.mathematics.number.Rational;
 public class EllipsoidOptimizer {
 	
 	double actual_value_ = 0d;
-	double epsilon_ = 0.001d;
+	double epsilon_ = 0.01d;
 	double initial_delta_ = 0d, actual_delta_;
 	int deepness_ = 0; //for binary search
 	int dimension_;
@@ -15,6 +15,8 @@ public class EllipsoidOptimizer {
 	VectorD obj_;
 	SeparationOracle sep_;
 	Ellipsoid ell_;
+	MatrixD rads_ = null;
+	VectorD center_ = null;
 	
 	public void set_objective(ArrayList<Rational> obj) {
 		obj_ = new VectorD(obj.size());
@@ -48,6 +50,7 @@ public class EllipsoidOptimizer {
 		public void set_center(VectorD v) {
 			center = v;
 			violate = (center.scalar_product(obj_)>-actual_value_);
+			if (!violate) sep_.set_center(v);
 		}
 		public boolean is_in() {
 			if (violate) return false;
@@ -60,17 +63,17 @@ public class EllipsoidOptimizer {
 		if (!ell_.is_feasible()) throw new ArithmeticException("model not feasible at given start value");
 		initial_delta_ = epsilon_;
 		actual_delta_ = epsilon_;
-		MatrixD rads = null;
-		VectorD center = null;
+		int maxcounter = 25;
 		while (ell_.is_feasible()) {
-			rads = new MatrixD(ell_.rads_);
-			center = new VectorD(ell_.center_);
+			if (deepness_ == maxcounter) throw new ArithmeticException("obj unbounded");
+			rads_ = new MatrixD(ell_.rads_);
+			center_ = new VectorD(ell_.center_);
 			deepness_++;
 			actual_delta_ *= 2;
 			actual_value_ += actual_delta_;
 		}
-		ell_.center_ = new VectorD(center);
-		ell_.rads_ = new MatrixD(rads);
+		ell_.center_ = new VectorD(center_);
+		ell_.rads_ = new MatrixD(rads_);
 		actual_delta_ /= 2;
 		actual_value_ -= actual_delta_;
 		while (deepness_ > 0) {
@@ -78,12 +81,12 @@ public class EllipsoidOptimizer {
 			deepness_--;
 			if (ell_.is_feasible()) {
 				actual_value_ += actual_delta_;
-				rads = new MatrixD(ell_.rads_);
-				center = new VectorD(ell_.center_);
+				rads_ = new MatrixD(ell_.rads_);
+				center_ = new VectorD(ell_.center_);
 			} else {
 				actual_value_ -= actual_delta_;		
-				ell_.center_ = new VectorD(center);
-				ell_.rads_ = new MatrixD(rads);		
+				ell_.center_ = new VectorD(center_);
+				ell_.rads_ = new MatrixD(rads_);		
 			}
 		}		
 		return actual_value_;
